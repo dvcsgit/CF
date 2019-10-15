@@ -1,0 +1,105 @@
+﻿@model Models.Role.WebPermissionFunctionModel
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tabDiv').css('min-height', $('#TabControl').height() + 30);
+
+
+        $('#TabControl a:first').tab('show');
+
+        $('.Permission').click(function () {
+            if ($(this).prop('checked')) {
+                $('.PermissionFunction[data-permissionid="' + $(this).val() + '"]').prop('disabled', false);
+            }
+            else {
+                $('.PermissionFunction[data-permissionid="' + $(this).val() + '"]').prop({ 'disabled': true, 'checked': false });
+            }
+        });
+
+        $('.Permission').each(function () {
+            var enabled = $(this).data('checked') === 'Y';
+
+            $(this).prop('checked', enabled);
+
+            if (!enabled) {
+                $('.PermissionFunction[data-permissionid="' + $(this).val() + '"]').prop('disabled', true);
+            }
+        });
+
+        $('.PermissionFunction').each(function () {
+            $(this).prop('checked', $(this).data('checked') === 'Y');
+        });
+    });
+
+    var WebPermissionFunctions = function () {
+        var data = [];
+
+        $('.PermissionFunction:checked').each(function () {
+            data.push($(this).val());
+        });
+
+        return JSON.stringify(data);
+    };
+
+</script>
+
+<div class="widget-box widget-color-dark">
+    <div class="widget-header">
+        <h5 class="bigger lighter">@Resources.Resource.Permission @Resources.Resource.Setting</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main" id="tabDiv">
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs" id="TabControl">
+                    @foreach (var item in Model.WebPermissions)
+                    {
+                        <li class="">
+                            <a data-toggle="tab" href="@("#Tab" + item.WebPermissionId)">
+                                @item.PermissionName[ViewBag.Lang]
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content">
+                    @foreach (var item in Model.WebPermissions)
+                    {
+                        <div id="@("Tab" + item.WebPermissionId)" class="tab-pane">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="col-sm-1 center">@Resources.Resource.Enabled</th>
+                                        <th class="col-sm-4">@Resources.Resource.Permission</th>
+                                        <th class="col-sm-7">@Resources.Resource.Function</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var permission in item.SubItems)
+                                    {
+                                        <tr>
+                                            <td class="col-sm-1 center">
+                                                <label>
+                                                    <input class="ace ace-checkbox-2 Permission" type="checkbox" value="@permission.WebPermissionId" data-checked="@(Model.RoleWebPermissionFunctions.Any(x => x.WebPermissionId == permission.WebPermissionId) ? "Y" : "N")">
+                                                    <span class="lbl"></span>
+                                                </label>
+                                            </td>
+                                            <td class="col-sm-4">@permission.PermissionName[ViewBag.Lang]</td>
+                                            <td class="col-sm-7">
+                                                @foreach (var function in permission.WebFunctions)
+                                                {
+                                                    <label>
+                                                        <input class="ace ace-checkbox-2 PermissionFunction" type="checkbox" value="@(permission.WebPermissionId + Utility.Define.Seperator + function.WebFunctionId)" data-permissionid="@permission.WebPermissionId" data-checked="@(Model.RoleWebPermissionFunctions.Any(x => x.WebPermissionId == permission.WebPermissionId && x.WebFunctionId == function.WebFunctionId) ? "Y" : "N")">
+                                                        <span class="lbl"> @function.FunctionName[ViewBag.Lang]</span>
+                                                    </label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

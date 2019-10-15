@@ -1,0 +1,99 @@
+﻿@model Models.Authentication.Account
+@{
+    /**/
+
+    ViewBag.Title = "_MainMenu";
+}
+
+@if (Model != null)
+{
+    <ul class="nav nav-list">
+        <li class="">
+            <a href="index.html">
+                <i class="menu-icon fa fa-tachometer"></i>
+                <span class="menu-text"> Dashboard </span>
+            </a>
+
+            <b class="arrow"></b>
+        </li>
+
+        @foreach (var ancestor in Model.MenuItems)
+        {
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-desktop"></i>
+                    <span class="menu-text">
+                        @ancestor.Name[ViewBag.Lang]
+                    </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <ul class="submenu">
+                    @foreach (var parent in ancestor.SubItemList)
+                    {
+                        <li data-id="@parent.Id" class="hsub Level2Menu">
+                            @if (!string.IsNullOrEmpty(parent.Controller))
+                            {
+                                <a href="@Url.Action(parent.Action,parent.Controller,new { area=parent.Area})" >
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    <span class="menu-text">
+                                        @parent.Name[ViewBag.Lang]
+                                    </span>
+
+                                    @if (parent.SubItemList != null && parent.SubItemList.Count > 0)
+                                    {
+                                        <b class="arrow fa fa-angle-down"></b>
+                                    }
+
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-toggle">
+                                    <i class="fa @parent.Icon" style="margin-right:3px;"></i>
+                                    @parent.Name[ViewBag.Lang]
+                                    @if (parent.SubItemList != null && parent.SubItemList.Count > 0)
+                                    {
+                                        <b class="arrow fa fa-angle-down"></b>
+                                    }
+                                </a>
+                            }
+
+                            @if (parent.SubItemList != null && parent.SubItemList.Count > 0)
+                            {
+                                <b class="arrow"></b>
+
+                                <ul class="submenu">
+                                    @foreach (var item in parent.SubItemList)
+                                    {
+                                        <li data-id="@item.Id" class="Level3Menu">
+                                            @if (item.Name[ViewBag.Lang].Length >= 10)
+                                            {
+                                                <a href="@Url.Action(item.Action,item.Controller,new { area = item.Area })" style="font-size:12px;">
+                                                    <i class="menu-icon fa @item.Icon"></i>
+                                                    @item.Name[ViewBag.Lang]
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action(item.Action,item.Controller,new { area = item.Area })">
+                                                    <i class="menu-icon fa @item.Icon"></i>
+                                                    @item.Name[ViewBag.Lang]
+                                                </a>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+
+                            <b class="arrow"></b>
+                        </li>
+                    }
+                   
+                </ul>
+            </li>
+        }
+
+    </ul>
+}

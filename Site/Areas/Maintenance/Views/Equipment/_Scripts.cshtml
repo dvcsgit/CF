@@ -1,0 +1,52 @@
+﻿@model System.String
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitMaintenanceOrganizationTree('@Model');
+    });
+
+    function InitMaintenanceOrganizationTree(organizationId) {
+        var container = $('#divMaintenanceOrganizationTreeContainer');
+
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: '@Url.Action("InitMaintenanceOrganizationTree")',
+            data: { organizationId: organizationId },
+            dataType: "html",
+            beforeSend: function () { container.Overlay('show'); },
+            success: function (data) { container.Overlay('hide').html(data); },
+            error: function (x, h, r) { container.Overlay('hide').html(x.responseText); }
+        });
+    }
+
+    function MaintenanceOrganizationSelect() {
+        $('#divMaintenanceOrganizationSelect').modal('show');
+    }
+
+    function Clear() {
+        $('#FormInput_MaintenanceOrganizationId').val('');
+        $('#MaintenanceOrganization').val('');
+    }
+
+    function Select() {
+        var nodeType;
+        var maintenanceOrganizationId = '';
+        var maintenanceOrganization = '';
+
+        $("#divMaintenanceOrganizationTree").jstree("get_selected").each(function () {
+            nodeType = $(this).attr("@Utility.Define.EnumTreeAttribute.NodeType");
+            maintenanceOrganizationId = $(this).attr("@Utility.Define.EnumTreeAttribute.OrganizationId");
+            maintenanceOrganization = $(this).attr("@Utility.Define.EnumTreeAttribute.ToolTip");
+        });
+
+        if (nodeType === '@Utility.Define.EnumTreeNodeType.Organization') {
+            $('#FormInput_MaintenanceOrganizationId').val(maintenanceOrganizationId);
+            $('#MaintenanceOrganization').val(maintenanceOrganization);
+            $('#divMaintenanceOrganizationSelect').modal('hide');
+        }
+        else {
+            $.InfoDialog('@string.Format("{0} {1}", Resources.Resource.Select, Resources.Resource.MaintenanceOrganization)');
+        }
+    }
+</script>
+

@@ -1,0 +1,182 @@
+﻿@model Models.Maintenance.Material.DetailViewModel
+<p>
+    @if (Model.Permission == Utility.Define.EnumOrganizationPermission.Editable)
+    {
+        if (ViewBag.CanEdit)
+        {
+            <button class="btn btn-app btn-primary btn-xs" onclick="Edit('@Model.MaterialId');" type="button">
+                <i class="ace-icon fa fa-pencil bigger-160"></i>
+                @Resources.Resource.Edit
+            </button>
+        }
+
+        if (ViewBag.CanDelete)
+        {
+            <button class="btn btn-app btn-danger btn-xs" onclick="Delete('@Model.MaterialId');" type="button">
+                <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                @Resources.Resource.Delete
+            </button>
+        }
+
+        if (ViewBag.CanCreate)
+        {
+            <button class="btn btn-app btn-primary btn-xs" onclick="Copy('@Model.MaterialId');" type="button">
+                <i class="ace-icon fa fa-copy bigger-160"></i>
+                @Resources.Resource.Copy
+            </button>
+        }
+    }
+    <button class="btn btn-app btn-success btn-xs" onclick="Query();" type="button">
+        <i class="ace-icon fa fa-ban bigger-160"></i>
+        @Resources.Resource.Back
+    </button>
+</p>
+<div class="widget-box widget-color-dark">
+    <div class="widget-header">
+        <h5 class="widget-title">@Resources.Resource.Material</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main no-padding">
+            <table class="table table-bordered table-input">
+                <tr>
+                    <th class="col-sm-1">@Html.LabelFor(x => x.ParentOrganizationName)</th>
+                    <td class="col-sm-11">@Html.DisplayFor(x => x.ParentOrganizationName)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.MaterialType)</th>
+                    <td>@Html.DisplayFor(x => x.MaterialType)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.MId)</th>
+                    <td>@Html.DisplayFor(x => x.MId)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.MaterialName)</th>
+                    <td>@Html.DisplayFor(x => x.MaterialName)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.Quantity)</th>
+                    <td>@Html.DisplayFor(x => x.Quantity)</td>
+                </tr>
+                @if (!string.IsNullOrEmpty(Model.Photo))
+                {
+                    <tr>
+                        <td colspan="4">
+                            <span class="profile-picture">
+                                <img class="img-responsive" style="max-height:200px;" alt="" src="@Url.Content(string.Format("~/EquipmentPatrolPhoto/{0}?t={1}", Model.Photo, Guid.NewGuid().ToString()))" />
+                            </span>
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </div>
+    </div>
+</div>
+@if (Model.MaterialSpecificationModels.Count > 0)
+{
+    <div class="space"></div>
+
+    <div class="widget-box widget-color-dark">
+        <div class="widget-header">
+            <h5 class="widget-title"> @Resources.Resource.MaterialSpecification</h5>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <table class="table table-bordered table-input">
+                    @{
+                        var rowCount = 0;
+
+                        if (Model.MaterialSpecificationModels.Count % 2 == 0)
+                        {
+                            rowCount = Model.MaterialSpecificationModels.Count / 2;
+                        }
+                        else
+                        {
+                            rowCount = Model.MaterialSpecificationModels.Count / 2 + 1;
+                        }
+                    }
+                    @for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+                    {
+                        if (rowIndex * 2 + 1 > Model.MaterialSpecificationModels.Count - 1)
+                        {
+                            var item = Model.MaterialSpecificationModels[rowIndex * 2];
+
+                            <tr>
+                                <th class="col-sm-1"><label>@item.Name</label></th>
+                                @if (item.MaterialSpecificationOptionModels.Count > 0)
+                                {
+                                    <td class="col-sm-11" colspan="3">@item.MaterialSpecificationOptionValue</td>
+                                }
+                                else
+                                {
+                                    <td class="col-sm-11" colspan="3">@item.Value</td>
+                                }
+                            </tr>
+                        }
+                        else
+                        {
+                            var item1 = Model.MaterialSpecificationModels[rowIndex * 2];
+                            var item2 = Model.MaterialSpecificationModels[rowIndex * 2 + 1];
+
+                            <tr>
+                                <th class="col-sm-1"><label>@item1.Name</label></th>
+                                @if (item1.MaterialSpecificationOptionModels.Count > 0)
+                                {
+                                    <td class="col-sm-5">@item1.MaterialSpecificationOptionValue</td>
+                                }
+                                else
+                                {
+                                    <td class="col-sm-5">@item1.Value</td>
+                                }
+                                <th class="col-sm-1"><label>@item2.Name</label></th>
+                                @if (item2.MaterialSpecificationOptionModels.Count > 0)
+                                {
+                                    <td class="col-sm-5">@item2.MaterialSpecificationOptionValue</td>
+                                }
+                                else
+                                {
+                                    <td class="col-sm-5">@item2.Value</td>
+                                }
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+}
+@if (Model.EquipmentModels.Count > 0)
+{
+    <div class="space"></div>
+
+    <div class="widget-box widget-color-dark">
+        <div class="widget-header">
+            <h5 class="widget-title"> @Resources.Resource.Equipment</h5>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <table class="table table-striped table-bordered table-hover nowrap">
+                    <thead class="thin-border-bottom">
+                        <tr>
+                            <th>@Resources.Resource.Organization</th>
+                            <th>@Resources.Resource.Equipment</th>
+                            <th>@Resources.Resource.Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.EquipmentModels)
+                        {
+                            <tr>
+                                <td>@item.OrganizationName</td>
+                                <td>@item.Equipment</td>
+                                <td>@item.Quantity</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

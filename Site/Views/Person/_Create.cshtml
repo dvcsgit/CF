@@ -1,0 +1,127 @@
+﻿@model Models.Person.CreateFormModel
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#CreateForm");
+
+        $('#FormInput_IsMobilePerson').prop('checked', $('#FormInput_IsMobilePerson').data('checked') === 'Y');
+
+        $('.AuthGroup').each(function () {
+            $(this).prop('checked', $(this).data('checked') === 'Y');
+        });
+    });
+
+    var Save = function () {
+        var form = $('#CreateForm');
+
+        if (form.valid()) {
+            var roleIds = [];
+
+            $('.AuthGroup:checked').each(function () {
+                roleIds.push($(this).val());
+            });
+
+            $('#FormInput_RoleIdsString').val(JSON.stringify(roleIds));
+
+            $.ajax({
+                type: "POST",
+                cache: false,
+                url: '@Url.Action("Create")',
+                data: form.serialize(),
+                dataType: "json",
+                beforeSend: function () { $.Overlay('show'); },
+                success: function (data) {
+                    $.Overlay('hide');
+
+                    if (data.IsSuccess) {
+                        Query();
+                        $.SuccessDialog(data.Message);
+                    }
+                    else {
+                        $.ErrorDialog(data.Message);
+                    }
+                },
+                error: function (x, h, r) {
+                    $.Overlay('hide');
+                    $.ErrorDialog(x.responseText);
+                }
+            });
+        }
+    };
+</script>
+<p>
+    <button class="btn btn-app btn-primary btn-xs" onclick="Save();" type="button">
+        <i class="ace-icon fa fa-save bigger-160"></i>
+        @Resources.Resource.Save
+    </button>
+    <button class="btn btn-app btn-success btn-xs" onclick="Query();" type="button">
+        <i class="ace-icon fa fa-ban bigger-160"></i>
+        @Resources.Resource.Cancel
+    </button>
+</p>
+<div class="widget-box widget-color-dark">
+    <div class="widget-header">
+        <h5 class="widget-title">@Resources.Resource.Create @Resources.Resource.Person</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main no-padding">
+            @using (Html.BeginForm("Create", null, FormMethod.Post, new { @ID = "CreateForm" }))
+            {
+                @Html.HiddenFor(x => x.OrganizationId)
+                @Html.HiddenFor(x => x.FormInput.RoleIdsString)
+
+                <table class="table table-bordered table-input">
+                    <tr>
+                        <th>@Html.LabelFor(x => x.ParentOrganizationFullName)</th>
+                        <td colspan="3">@Html.DisplayFor(x => x.ParentOrganizationFullName)</td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-1">@Html.LabelFor(x => x.FormInput.Id)</th>
+                        <td class="col-sm-5">
+                            @Html.TextBoxFor(x => x.FormInput.Id, new { @class = "col-sm-11" })
+                            <br />
+                            @Html.ValidationMessageFor(x => x.FormInput.Id)
+                        </td>
+                        <th class="col-sm-1">@Html.LabelFor(x => x.FormInput.Name)</th>
+                        <td class="col-sm-5">
+                            @Html.TextBoxFor(x => x.FormInput.Name, new { @class = "col-sm-11" })
+                            <br />
+                            @Html.ValidationMessageFor(x => x.FormInput.Name)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@Html.LabelFor(x => x.FormInput.Title)</th>
+                        <td>@Html.TextBoxFor(x => x.FormInput.Title, new { @class = "col-sm-6" })</td>
+                        @*<th>@Html.LabelFor(x => x.FormInput.UID)</th>
+                        <td>@Html.TextBoxFor(x => x.FormInput.UID, new { @class = "col-sm-6" })</td>*@
+                    </tr>
+                    <tr>
+                        <th>@Html.LabelFor(x => x.FormInput.IsMobilePerson)</th>
+                        <td colspan="3">
+                            <label>
+                                <input id="FormInput_IsMobilePerson" name="FormInput.IsMobilePerson" class="ace ace-checkbox-2" type="checkbox" value="true" data-checked="@(Model.FormInput.IsMobilePerson ? "Y" : "N")">
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@Html.LabelFor(x => x.FormInput.EMail)</th>
+                        <td colspan="3">@Html.TextBoxFor(x => x.FormInput.EMail, new { @class = "col-sm-10" })</td>
+                    </tr>
+                    <tr>
+                        <th>@Html.LabelFor(x => x.FormInput.RoleIdsString)</th>
+                        <td colspan="3">
+                            @foreach (var item in Model.RoleModels)
+                            {
+                                <label style="padding:2px;">
+                                    <input type="checkbox" class="ace ace-checkbox-2 AuthGroup" value="@item.RoleId" data-checked="@(Model.PersonRoleIds.Any(x => x == item.RoleId) ? "Y" : "N")">
+                                    <span class="lbl"> @item.RoleName</span>
+                                </label>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,112 @@
+﻿@model Models.Maintenance.AbnormalReason.CreateFormModel
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#CreateForm");
+
+        $('#AbnormalType').change(function () {
+            var val = $(this).val();
+
+            if (val === '') {
+                $('#FormInput_Type').val('').prop('readonly', true);
+            }
+            else if (val === '@Utility.Define.New') {
+                $('#FormInput_Type').val('').prop('readonly', false);
+            }
+            else {
+                $('#FormInput_Type').val(val).prop('readonly', true);
+            }
+        });
+    });
+
+    var Save = function () {
+        var form = $('#CreateForm');
+
+        if (form.valid()) {
+            if ($('#FormInput_Type').val() === '') {
+                $.InfoDialog('@Resources.Resource.AbnormalReasonTypeRequired');
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: '@Url.Action("Create")',
+                    data: form.serialize(),
+                    dataType: "json",
+                    beforeSend: function () { $.Overlay('show'); },
+                    success: function (data) {
+                        $.Overlay('hide');
+
+                        if (data.IsSuccess) {
+                            Query();
+                            $.SuccessDialog(data.Message);
+                        }
+                        else {
+                            $.ErrorDialog(data.Message);
+                        }
+                    },
+                    error: function (x, h, r) {
+                        $.Overlay('hide');
+                        $.ErrorDialog(x.responseText);
+                    }
+                });
+            }
+        }
+    };
+</script>
+<p>
+    <button class="btn btn-app btn-primary btn-xs" onclick="Save();" type="button">
+        <i class="ace-icon fa fa-save bigger-160"></i>
+        @Resources.Resource.Save
+    </button>
+    <button class="btn btn-app btn-success btn-xs" onclick="Query();" type="button">
+        <i class="ace-icon fa fa-ban bigger-160"></i>
+        @Resources.Resource.Cancel
+    </button>
+</p>
+<div class="widget-box widget-color-dark">
+    <div class="widget-header">
+        <h5 class="widget-title">@Resources.Resource.Create @Resources.Resource.AbnormalReason</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main no-padding">
+            @using (Html.BeginForm("Create", null, FormMethod.Post, new { @ID = "CreateForm" }))
+            {
+                @Html.HiddenFor(x => x.OrganizationId)
+
+                <table class="table table-bordered table-input">
+                    <tr>
+                        <th>@Html.LabelFor(x => x.ParentOrganizationFullName)</th>
+                        <td colspan="3">@Html.DisplayFor(x => x.ParentOrganizationFullName)</td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-1">@Html.LabelFor(x => x.FormInput.Type)</th>
+                        <td class="col-sm-5">@Html.DropDownList("AbnormalType", Model.Types)</td>
+                        <th class="col-sm-1">@Html.LabelFor(x => x.FormInput.Type)</th>
+                        <td class="col-sm-5">
+                            @Html.TextBoxFor(x => x.FormInput.Type, new { @class = "col-sm-11", @readonly = "readonly" })
+                            <br />
+                            @Html.ValidationMessageFor(x => x.FormInput.Type)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>@Html.LabelFor(x => x.FormInput.ARId)</th>
+                        <td>
+                            @Html.TextBoxFor(x => x.FormInput.ARId, new { @class = "col-sm-11" })
+                            <br />
+                            @Html.ValidationMessageFor(x => x.FormInput.ARId)
+                        </td>
+                        <th>@Html.LabelFor(x => x.FormInput.Name)</th>
+                        <td>
+                            @Html.TextBoxFor(x => x.FormInput.Name, new { @class = "col-sm-11" })
+                            <br />
+                            @Html.ValidationMessageFor(x => x.FormInput.Name)
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+<div class="space"></div>
+@Html.Partial("_Select")
+

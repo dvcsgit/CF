@@ -1,0 +1,67 @@
+﻿@model Models.Authentication.Account
+
+@if (Model != null)
+{
+    <li class="light-blue dropdown-modal">
+        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+            <img class="nav-user-photo" src="~/assets/images/avatars/user.jpg" alt="Jason's Photo" />
+            <span class="user-info">
+                <small>Welcome,</small>
+                @Model.Id
+            </span>
+
+            <i class="ace-icon fa fa-caret-down"></i>
+        </a>
+
+        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+            <li>
+                <a href="@Url.Action("ChangePassword","Home",new { area=""})">
+                    <i class="ace-icon fa fa-cog"></i>
+                    @Resources.Resource.ChangePassword
+                </a>
+            </li>
+
+            <li class="divider"></li>
+
+            @if (ViewBag.Lang != "zh-cn")
+            {
+                <li>
+                    <a href="@Url.Action("Index","Home",new {lang="zh-cn", area=""})">
+                        <i class="ace-icon fa fa-cog"></i>
+                        @Resources.Resource.Chinese
+                    </a>
+                </li>
+            }
+
+            @if (ViewBag.Lang != "us-en")
+            {
+                <li>
+                    <a href="@Url.Action("Index","Home",new {lang="us-en", area=""})">
+                        <i class="ace-icon fa fa-cog"></i>
+                        @Resources.Resource.English
+                    </a>
+                </li>
+            }
+
+            <li class="divider"></li>
+
+            <li>
+                <a href="@Url.Action("SignOut","Home",new { area=""})">
+                    <i class="ace-icon fa fa-power-off"></i>
+                    @Resources.Resource.SignOut
+                </a>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="light-red">
+        <a href="@Url.Action("Login","Home",new { area=""})">
+            <span class="user-info">
+                <small>@Resources.Resource.SessionTimeout</small>
+                @Resources.Resource.SignIn
+            </span>
+        </a>
+    </li>
+}

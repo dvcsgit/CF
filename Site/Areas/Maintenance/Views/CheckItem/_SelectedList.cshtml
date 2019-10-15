@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Models.Maintenance.CheckItem.AbnormalReasonModel>
+<table class="table table-striped table-bordered table-hover nowrap">
+    <thead class="thin-border-bottom">
+        <tr>
+            <th class="col-sm-1"></th>
+            <th>@Resources.Resource.AbnormalReasonType</th>
+            <th>@Resources.Resource.ARId</th>
+            <th>@Resources.Resource.AbnormalReasonName</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="col-sm-1 center">
+                    <div class="action-buttons">
+                        <a class="red" href="#" onclick="DeleteSelected('@item.AbnormalReasonId'); return false;" title="@Resources.Resource.Delete">
+                            <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                        </a>
+                    </div>
+                </td>
+                <td>@item.Type</td>
+                <td>@item.ARId</td>
+                <td>@item.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

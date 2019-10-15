@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--若要在引用此项目的项目中使用此文件，需在此文件的属性中设置Copy to Output Directory属性-->
+<Config>
+  <SystemName zh-cn="管理系统" us-en="Management System"></SystemName>
+  <Folder>
+    <UserFolder VirtualPath="UserPhoto">E:\CF\File\UserPhoto</UserFolder>
+    <Maintenance>
+      <Photo VirtualPath="MaintenancePhoto">E:\CF\File\Maintenance\Photo</Photo>
+    </Maintenance>
+  </Folder>
+
+  <PopulationLimits>
+    <PopulationLimit OrganizationId="" NumberOfPeople="" NumberOfMobilePeople=""></PopulationLimit>
+  </PopulationLimits>
+</Config>

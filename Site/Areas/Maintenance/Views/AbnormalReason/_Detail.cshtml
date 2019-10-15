@@ -1,0 +1,64 @@
+﻿@model Models.Maintenance.AbnormalReason.DetailViewModel
+<p>
+    @if (Model.Permission == Utility.Define.EnumOrganizationPermission.Editable)
+    {
+        if (ViewBag.CanEdit)
+        {
+            <button class="btn btn-app btn-primary btn-xs" onclick="Edit('@Model.AbnormalReasonId');" type="button">
+                <i class="ace-icon fa fa-pencil bigger-160"></i>
+                @Resources.Resource.Edit
+            </button>
+        }
+
+        if (ViewBag.CanDelete)
+        {
+            <button class="btn btn-app btn-danger btn-xs" onclick="Delete('@Model.AbnormalReasonId');" type="button">
+                <i class="ace-icon fa fa-trash-o bigger-160"></i>
+                @Resources.Resource.Delete
+            </button>
+        }
+
+        if (ViewBag.CanCreate)
+        {
+            <button class="btn btn-app btn-primary btn-xs" onclick="Copy('@Model.AbnormalReasonId');" type="button">
+                <i class="ace-icon fa fa-copy bigger-160"></i>
+                @Resources.Resource.Copy
+            </button>
+        }
+    }
+
+    <button class="btn btn-app btn-success btn-xs" onclick="Query();" type="button">
+        <i class="ace-icon fa fa-ban bigger-160"></i>
+        @Resources.Resource.Back
+    </button>
+</p>
+<div class="widget-box widget-color-dark">
+    <div class="widget-header">
+        <h5 class="widget-title">@Resources.Resource.AbnormalReason</h5>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main no-padding">
+            <table class="table table-bordered table-input">
+                <tr>
+                    <th>@Html.LabelFor(x => x.ParentOrganizationFullName)</th>
+                    <td colspan="3">@Html.DisplayFor(x => x.ParentOrganizationFullName)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.Type)</th>
+                    <td colspan="3">@Html.DisplayFor(x => x.Type)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-1">@Html.LabelFor(x => x.ARId)</th>
+                    <td class="col-sm-5">@Html.DisplayFor(x => x.ARId)</td>
+                    <th class="col-sm-1">@Html.LabelFor(x => x.Name)</th>
+                    <td class="col-sm-5">@Html.DisplayFor(x => x.Name)</td>
+                </tr>
+                <tr>
+                    <th>@Html.LabelFor(x => x.SolutionNamesString)</th>
+                    <td colspan="3">@Html.DisplayFor(x => x.SolutionNamesString)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+

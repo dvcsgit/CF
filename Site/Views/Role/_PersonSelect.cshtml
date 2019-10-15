@@ -1,0 +1,23 @@
+﻿<div id="divSelectPersonTreeWidget">
+    <p>
+        <button class="btn btn-primary" onclick="AddPerson(); return false;">
+            <i class="ace-icon fa fa-plus"></i>
+            @Resources.Resource.Select
+        </button>
+        <button class="btn btn-success" onclick="CancelPersonSelect(); return false;">
+            <i class="ace-icon fa fa-ban"></i>
+            @Resources.Resource.Cancel
+        </button>
+    </p>
+    <div id="divSelectPersonTreeContainer" style="min-height:200px;"></div>
+</div>
+<div id="divSelectedPersonListWidget">
+    <p>
+        <button class="btn btn-primary" onclick="PersonSelect(); return false;">
+            <i class="ace-icon fa fa-plus"></i>
+            @Resources.Resource.Create
+        </button>
+    </p>
+    <div id="divSelectedPersonList" style="min-height:200px;"></div>
+</div>
+

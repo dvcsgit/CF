@@ -1,0 +1,113 @@
+﻿@model System.String
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetSelectedPerson();
+
+        InitSelectPersonTree('@Model');
+
+        $('#divSelectPersonTreeWidget').hide();
+    });
+
+    function GetSelectedPerson() {
+        var list = $('#divSelectedPersonList');
+
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: '@Url.Action("GetSelectedPerson")',
+            dataType: "html",
+            beforeSend: function () { list.Overlay('show'); },
+            success: function (data) { list.Overlay('show').html(data); },
+            error: function (x, h, r) { list.Overlay('hide').html(x.responseText); }
+        });
+    }
+
+    function InitSelectPersonTree(ancestorOrganizationId) {
+        var container = $('#divSelectPersonTreeContainer');
+
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: '@Url.Action("InitSelectPersonTree")',
+            data: { ancestorOrganizationId: ancestorOrganizationId },
+            dataType: "html",
+            beforeSend: function () { container.Overlay('show'); },
+            success: function (data) { container.Overlay('hide').html(data); },
+            error: function (x, h, r) { container.Overlay('hide').html(x.responseText); }
+        });
+    }
+
+    var PersonSelect = function () {
+        $('#divSelectedPersonListWidget').hide();
+        $('#divSelectPersonTreeWidget').show();
+    };
+
+    var CancelPersonSelect = function () {
+        $('#divSelectedPersonListWidget').show();
+        $('#divSelectPersonTreeWidget').hide();
+    };
+
+    var AddPerson = function () {
+        var data = [];
+
+        $("#divSelectPersonTree").jstree("get_checked", null, true).each(function () {
+            data.push($(this).attr("@Utility.Define.EnumTreeAttribute.OrganizationId") + '@Utility.Define.Seperator' + $(this).attr("@Utility.Define.EnumTreeAttribute.LoginId"));
+        });
+
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: '@Url.Action("AddPerson")',
+            data: { selecteds: JSON.stringify(data) },
+            dataType: "json",
+            beforeSend: function () {
+                $('#divSelectPersonTreeWidget').hide();
+                $('#divSelectedPersonListWidget').show().Overlay('show');
+            },
+            success: function (data) {
+                $('#divSelectedPersonListWidget').Overlay('hide');
+
+                if (data.IsSuccess) {
+                    GetSelectedPerson();
+                    $("#divSelectPersonTree").jstree("uncheck_all");
+                }
+                else {
+                    $.ErrorDialog(data.Message);
+                }
+            },
+            error: function (x, h, r) {
+                $('#divSelectedPersonListWidget').Overlay('hide');
+
+                $.ErrorDialog(x.responseText);
+            }
+        });
+    };
+
+    var DeletePerson = function (pId) {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: '@Url.Action("DeletePerson")',
+            data: { pId: pId },
+            dataType: "json",
+            beforeSend: function () { $('#divSelectedPersonListWidget').Overlay('show'); },
+            success: function (data) {
+                $('#divSelectedPersonListWidget').Overlay('hide');
+
+                if (data.IsSuccess) {
+                    GetSelectedPerson();
+                    $("#divSelectPersonTree").jstree("uncheck_all");
+                }
+                else {
+                    $.ErrorDialog(data.Message);
+                }
+            },
+            error: function (x, h, r) {
+                $('#divSelectedPersonListWidget').Overlay('hide');
+
+                $.ErrorDialog(x.responseText);
+            }
+        });
+    };
+</script>
+
